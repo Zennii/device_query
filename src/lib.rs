@@ -9,7 +9,7 @@
 //! let device_state = DeviceState::new(); // DeviceState::default() is also valid  
 //!
 //! let mouse: MouseState = device_state.get_mouse();
-//! println!("Current Mouse Coordinates: {:?}", mouse.coordinates);  
+//! println!("Current Mouse Coordinates: {:?}", mouse.coordinates());  
 //!
 //! let keys: Vec<Keycode> = device_state.get_keys();
 //! println!("Is A pressed? {}", keys.contains(&Keycode::A));

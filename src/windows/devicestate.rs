@@ -48,10 +48,7 @@ impl DeviceState {
             create_button_arr(&buttons)
         };
 
-        MouseState {
-            coordinates,
-            buttons,
-        }
+        MouseState::from(coordinates, buttons)
     }
 
     pub fn query_keymap(&self) -> Vec<Keycode> {
