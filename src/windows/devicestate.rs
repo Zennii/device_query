@@ -1,23 +1,29 @@
 use crate::{KeyCode, MouseState};
 use winapi::{shared::windef::POINT, um::winuser};
 
+/// The base struct for getting Mouse and Keyboard information,
+/// extra methods provided by [DeviceQuery]
 pub struct DeviceState;
 
 impl DeviceState {
+    /// Create a new [DeviceState]
     pub fn new() -> DeviceState {
         DeviceState {}
     }
 
-    pub fn query_pointer(&self) -> MouseState {
-        let point: &mut POINT = &mut POINT { x: 0, y: 0 }; // Create a new, empty point
-
+    /// Query the mouse for it's coordinates and pressed buttons, returned as a [MouseState]
+    pub fn query_mouse(&self) -> MouseState {
         // Create the mouse coordinate tuple
+        let point: &mut POINT = &mut POINT { x: 0, y: 0 }; // Create a new, empty point to be filled by GetCursorPos()
         let coordinates = if unsafe { winuser::GetCursorPos(point) != 0 } {
+            // Dereference the point and create a tuple from the x and y coordinates
             let point = *point;
             (point.x, point.y)
         } else {
+            // Return (0, 0) if GetCursorPos() returns 0
             (0, 0)
         };
+        drop(point); // Drop the point
 
         // Create the mouse button array
         let buttons = {
@@ -51,6 +57,7 @@ impl DeviceState {
         MouseState::from(coordinates, buttons)
     }
 
+    /// Query the keyboard for all pressed keys, returned as a vector of [Keycode]s
     pub fn query_keymap(&self) -> Vec<KeyCode> {
         let (mut key_codes, mut key_map) = (Vec::with_capacity(256), Vec::with_capacity(256));
 
@@ -73,7 +80,7 @@ impl DeviceState {
 }
 
 impl Default for DeviceState {
-    /// Returns a new DeviceState
+    /// Create a new [DeviceState]
     fn default() -> Self {
         Self::new()
     }

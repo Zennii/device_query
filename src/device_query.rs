@@ -9,7 +9,7 @@ pub trait DeviceQuery {
 impl DeviceQuery for DeviceState {
     /// Query for the current mouse position and mouse button state.
     fn get_mouse(&self) -> MouseState {
-        self.query_pointer()
+        self.query_mouse()
     }
 
     /// Query for all keys that are currently pressed down.

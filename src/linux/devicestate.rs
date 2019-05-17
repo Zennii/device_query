@@ -2,12 +2,14 @@ use crate::{KeyCode, MouseState};
 use std::{ptr, slice};
 use x11::xlib;
 
+/// The base struct for getting Mouse and Keyboard information,
+/// extra methods provided by [DeviceQuery]
 pub struct DeviceState {
     display: *mut xlib::Display,
 }
 
 impl DeviceState {
-    /// Create a new DeviceState
+    /// Create a new [DeviceState]
     pub fn new() -> DeviceState {
         unsafe {
             xlib::XInitThreads();
@@ -18,7 +20,8 @@ impl DeviceState {
         }
     }
 
-    pub fn query_pointer(&self) -> MouseState {
+    /// Query the mouse for it's coordinates and pressed buttons, returned as a [MouseState]
+    pub fn query_mouse(&self) -> MouseState {
         let (mut win_x, mut win_y, mut mask_return) = (0, 0, 0);
 
         unsafe {
@@ -71,12 +74,13 @@ impl DeviceState {
         MouseState::from((win_x, win_y), buttons);
     }
 
+    /// Query the keyboard for all pressed keys, returned as a vector of [Keycode]s
     pub fn query_keymap(&self) -> Vec<KeyCode> {
         let mut key_codes = Vec::new(); // Create vector to hold all key codes
-        let key_map: *mut i8 = [0; 32].as_mut_ptr();
+        let key_map: *mut i8 = [0; 32].as_mut_ptr(); // Create an empty key map array
 
         unsafe {
-            xlib::XQueryKeymap(self.display, key_map);
+            xlib::XQueryKeymap(self.display, key_map); // Query the OS for the key map and fill `key_map` with results
         }
 
         for (ix, byte) in unsafe { slice::from_raw_parts(key_map, 32).iter().enumerate() } {
@@ -84,12 +88,12 @@ impl DeviceState {
                 let bitmask = 1 << bit;
 
                 if byte & bitmask != 0 {
-                    let KeyCode = ix as u8 * 8 + bit;
+                    let keycode = ix as u8 * 8 + bit;
                     let mut key_syms: i32 = 0;
 
                     unsafe {
                         let key_sym =
-                            xlib::XGetKeyboardMapping(self.display, KeyCode, 1, &mut key_syms);
+                            xlib::XGetKeyboardMapping(self.display, keycode, 1, &mut key_syms);
 
                         for ks in slice::from_raw_parts(key_sym, key_syms as usize).iter() {
                             // Attempt to match KeyCode against keys and if
@@ -106,14 +110,14 @@ impl DeviceState {
             }
         }
 
+        // Remove consecutive duplicates from the key code vector before returning it
         key_codes.dedup();
-
         key_codes
     }
 }
 
 impl Default for DeviceState {
-    /// Create a new DeviceState
+    /// Create a new [DeviceState]
     fn default() -> Self {
         Self::new()
     }
