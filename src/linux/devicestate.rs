@@ -3,13 +3,13 @@ use std::{ptr, slice};
 use x11::xlib;
 
 /// The base struct for getting Mouse and Keyboard information,
-/// extra methods provided by [DeviceQuery]
+/// extra methods provided by DeviceQuery
 pub struct DeviceState {
     display: *mut xlib::Display,
 }
 
 impl DeviceState {
-    /// Create a new [DeviceState]
+    /// Create a new DeviceState
     pub fn new() -> DeviceState {
         unsafe {
             xlib::XInitThreads();
@@ -20,7 +20,7 @@ impl DeviceState {
         }
     }
 
-    /// Query the mouse for it's coordinates and pressed buttons, returned as a [MouseState]
+    /// Query the mouse for it's coordinates and pressed buttons, returned as a MouseState
     pub fn query_mouse(&self) -> MouseState {
         let (mut win_x, mut win_y, mut mask_return) = (0, 0, 0);
 
@@ -74,7 +74,7 @@ impl DeviceState {
         MouseState::from((win_x, win_y), buttons);
     }
 
-    /// Query the keyboard for all pressed keys, returned as a vector of [Keycode]s
+    /// Query the keyboard for all pressed keys, returned as a vector of KeyCodes
     pub fn query_keymap(&self) -> Vec<KeyCode> {
         let mut key_codes = Vec::new(); // Create vector to hold all key codes
         let key_map: *mut i8 = [0; 32].as_mut_ptr(); // Create an empty key map array
@@ -117,7 +117,7 @@ impl DeviceState {
 }
 
 impl Default for DeviceState {
-    /// Create a new [DeviceState]
+    /// Create a new DeviceState
     fn default() -> Self {
         Self::new()
     }
