@@ -1,4 +1,4 @@
-use crate::{Keycode, MouseState};
+use crate::{KeyCode, MouseState};
 use winapi::{shared::windef::POINT, um::winuser};
 
 pub struct DeviceState;
@@ -51,7 +51,7 @@ impl DeviceState {
         MouseState::from(coordinates, buttons)
     }
 
-    pub fn query_keymap(&self) -> Vec<Keycode> {
+    pub fn query_keymap(&self) -> Vec<KeyCode> {
         let (mut key_codes, mut key_map) = (Vec::with_capacity(256), Vec::with_capacity(256));
 
         for key in 0..256 {
@@ -62,7 +62,7 @@ impl DeviceState {
             if *byte as u32 & 0x8000 != 0 {
                 // If the keycode is matched, then push the resolved
                 // key to the key_codes vector
-                if let Some(k) = Keycode::keycode_to_key(ix as i32) {
+                if let Some(k) = KeyCode::keycode_to_key(ix as i32) {
                     key_codes.push(k);
                 }
             }

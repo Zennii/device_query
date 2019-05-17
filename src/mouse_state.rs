@@ -1,6 +1,7 @@
 /// A simple structure containing the current mouse coordinates and the
 /// state of each mouse button that we can query. Currently, Windows and
 /// Linux provide nice ways to query five mouse buttons.
+///
 /// `buttons` will contain an array of the five mouse buttons, with `true` meaning that the button
 /// is pressed and `false` meaning that the button is not pressed. Index 0 is mouse button 1, Index 1 is button 2, etc.  
 /// ```rust
@@ -14,6 +15,7 @@
 /// # Ok(())
 /// # }
 /// ```
+///
 /// `coordinates` will contain a tuple of the x and y coordinates of the cursor  
 /// ```rust
 /// # fn example_coordinates() -> Result<(), ()> {
@@ -73,6 +75,7 @@ impl MouseState {
         buttons
     }
 
+    /// Create a MouseState from a coordinate tuple and a button array
     pub fn from(coordinates: (i32, i32), buttons: [bool; 5]) -> Self {
         Self {
             coordinates,

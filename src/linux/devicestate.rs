@@ -1,4 +1,4 @@
-use crate::{Keycode, MouseState};
+use crate::{KeyCode, MouseState};
 use std::{ptr, slice};
 use x11::xlib;
 
@@ -71,7 +71,7 @@ impl DeviceState {
         MouseState::from((win_x, win_y), buttons);
     }
 
-    pub fn query_keymap(&self) -> Vec<Keycode> {
+    pub fn query_keymap(&self) -> Vec<KeyCode> {
         let mut key_codes = Vec::new(); // Create vector to hold all key codes
         let key_map: *mut i8 = [0; 32].as_mut_ptr();
 
@@ -84,17 +84,17 @@ impl DeviceState {
                 let bitmask = 1 << bit;
 
                 if byte & bitmask != 0 {
-                    let keycode = ix as u8 * 8 + bit;
+                    let KeyCode = ix as u8 * 8 + bit;
                     let mut key_syms: i32 = 0;
 
                     unsafe {
                         let key_sym =
-                            xlib::XGetKeyboardMapping(self.display, keycode, 1, &mut key_syms);
+                            xlib::XGetKeyboardMapping(self.display, KeyCode, 1, &mut key_syms);
 
                         for ks in slice::from_raw_parts(key_sym, key_syms as usize).iter() {
-                            // Attempt to match keycode against keys and if
+                            // Attempt to match KeyCode against keys and if
                             // the key is matched push to the key_codes vector
-                            if let Some(k) = Keycode::keysym_to_key(*ks as u32) {
+                            if let Some(k) = KeyCode::keysym_to_key(*ks as u32) {
                                 key_codes.push(k)
                             };
                         }
