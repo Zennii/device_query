@@ -106,7 +106,7 @@ pub enum Keycode {
 
 impl Keycode {
     pub fn keycode_to_key(keycode: i32) -> Option<Keycode> {
-        use winapi::winuser;
+        use winapi::um::winuser;
 
         // Matches keycode against utility/control keys, defaulting to `None`
         // if no match is found
