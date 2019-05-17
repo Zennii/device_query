@@ -2,23 +2,26 @@
 //! an active window. Currently works in Windows and Linux.
 //!
 //! ```rust
+//! # fn example_usage() -> Result<(), ()> {
 //! // A glob import will import the same things, this is just an explicit import
 //! use device_query::{DeviceQuery, DeviceState, MouseState, Keycode};
 //!
-//! let device_state = DeviceState::new(); // DeviceState::default() is also valid
+//! let device_state = DeviceState::new(); // DeviceState::default() is also valid  
 //!
 //! let mouse: MouseState = device_state.get_mouse();
-//! println!("Current Mouse Coordinates: {:?}", mouse.coordinates);
+//! println!("Current Mouse Coordinates: {:?}", mouse.coordinates);  
 //!
 //! let keys: Vec<Keycode> = device_state.get_keys();
 //! println!("Is A pressed? {}", keys.contains(&Keycode::A));
+//! # Ok(())
+//! # }
 //! ```
 
 mod mouse_state;
 pub use mouse_state::MouseState;
 
 mod device_query;
-pub use device_query::DeviceQuery;
+pub use crate::device_query::DeviceQuery;
 
 // Exposes the linux version for linux builds
 #[cfg(target_os = "linux")]

@@ -3,13 +3,16 @@
 /// Linux provide nice ways to query five mouse buttons.
 #[derive(Debug, PartialEq, Clone)]
 pub struct MouseState {
-    /// `coords` will contain a tuple of the x and y coordinates of the cursor  
+    /// `coordinates` will contain a tuple of the x and y coordinates of the cursor  
     /// ```rust
+    /// # fn example_coordinates() -> Result<(), ()> {
     /// # use device_query::{DeviceQuery, DeviceState, MouseState};
     /// # let device_state = DeviceState::new();
     /// let mouse: MouseState = device_state.get_mouse(); // get_mouse() from the `DeviceQuery` trait
     /// println!("{:?}", mouse.coordinates); // Prints something along the lines of `(100, 100)`, depending on where
-    ///                                 // Your mouse is
+    ///                                      // Your mouse is
+    /// # Ok(())
+    /// # }
     /// ```
     ///
     pub coordinates: (i32, i32),
@@ -17,12 +20,15 @@ pub struct MouseState {
     /// `buttons` will contain an array of the five mouse buttons, with `true` meaning that the button
     /// is pressed and `false` meaning that the button is not pressed. Index 0 is mouse button 1, Index 1 is button 2, etc.  
     /// ```rust
+    /// # fn example_buttons() -> Result<(), ()> {
     /// # use device_query::{DeviceQuery, DeviceState, MouseState};
     /// # let device_state = DeviceState::new();
     /// let mouse: MouseState = device_state.get_mouse(); // get_mouse() from the `DeviceQuery` trait
     /// println!("{:?}", mouse.buttons); // Prints something along the lines of
     ///                                  // `[false, true, false, false, false]`, depending on what buttons are
     ///                                  // pressed. Index 0 is mouse button 1, Index 1 is button 2, etc.
+    /// # Ok(())
+    /// # }
     /// ```
     pub buttons: [bool; 5],
 }
@@ -36,5 +42,75 @@ impl MouseState {
     /// Get an array containing the state of the mouse buttons
     pub fn buttons(&self) -> [bool; 5] {
         self.buttons
+    }
+
+    /// Get a mouse button
+    pub fn get_button(&self, button: MouseButton) -> bool {
+        match button {
+            MouseButton::Right => self.buttons[0],
+            MouseButton::Left => self.buttons[1],
+            MouseButton::Middle => self.buttons[2],
+            MouseButton::Four => self.buttons[3],
+            MouseButton::Five => self.buttons[4],
+        }
+    }
+}
+
+/// Allows access to mouse buttons in a named way
+/// via MouseState::get_button()
+pub enum MouseButton {
+    Right,
+    Left,
+    Middle,
+    /// Also known as XButton1
+    Four,
+    /// Also known as XButton2
+    Five,
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn coordinate_test() {
+        let test_mouse = MouseState {
+            coordinates: (100, 100),
+            buttons: [false; 5],
+        };
+
+        assert!(
+            test_mouse.coordinates == test_mouse.coordinates()
+                && test_mouse.coordinates == (100, 100)
+                && test_mouse.coordinates() == (100, 100)
+        );
+    }
+
+    #[test]
+    fn button_test() {
+        let test_mouse = MouseState {
+            coordinates: (100, 100),
+            buttons: [false; 5],
+        };
+
+        assert!(
+            test_mouse.buttons == test_mouse.buttons()
+                && test_mouse.buttons == [false; 5]
+                && test_mouse.buttons() == [false; 5]
+        );
+    }
+
+    #[test]
+    fn named_button_test() {
+        let test_mouse = MouseState {
+            coordinates: (100, 100),
+            buttons: [true, false, true, false, true],
+        };
+
+        assert_eq!(test_mouse.get_button(MouseButton::Right), true);
+        assert_eq!(test_mouse.get_button(MouseButton::Left), false);
+        assert_eq!(test_mouse.get_button(MouseButton::Middle), true);
+        assert_eq!(test_mouse.get_button(MouseButton::Four), false);
+        assert_eq!(test_mouse.get_button(MouseButton::Five), true);
     }
 }
