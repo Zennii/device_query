@@ -18,7 +18,7 @@
 //! ```
 
 mod mouse_state;
-pub use mouse_state::MouseState;
+pub use mouse_state::{MouseButton, MouseState};
 
 mod device_query;
 pub use crate::device_query::DeviceQuery;

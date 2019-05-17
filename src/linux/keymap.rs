@@ -2,6 +2,7 @@
 /// A list of supported keys that we can query from the OS. Outside of mod
 /// keys, we only support English keys at the moment.
 pub enum Keycode {
+    // Numeric keys
     Key0,
     Key1,
     Key2,
@@ -12,6 +13,8 @@ pub enum Keycode {
     Key7,
     Key8,
     Key9,
+
+    // Letter keys
     A,
     B,
     C,
@@ -38,6 +41,8 @@ pub enum Keycode {
     X,
     Y,
     Z,
+
+    // Function keys
     F1,
     F2,
     F3,
@@ -50,6 +55,8 @@ pub enum Keycode {
     F10,
     F11,
     F12,
+
+    // Miscellaneous control keys
     Escape,
     Space,
     LControl,

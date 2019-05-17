@@ -9,12 +9,11 @@ pub struct MouseState {
     /// # use device_query::{DeviceQuery, DeviceState, MouseState};
     /// # let device_state = DeviceState::new();
     /// let mouse: MouseState = device_state.get_mouse(); // get_mouse() from the `DeviceQuery` trait
-    /// println!("{:?}", mouse.coordinates); // Prints something along the lines of `(100, 100)`, depending on where
-    ///                                      // Your mouse is
+    /// println!("{:?}", mouse.coordinates); // Prints something along the lines of `(100, 100)`, depending on
+    ///                                      // where your mouse is
     /// # Ok(())
     /// # }
     /// ```
-    ///
     pub coordinates: (i32, i32),
 
     /// `buttons` will contain an array of the five mouse buttons, with `true` meaning that the button
@@ -54,10 +53,31 @@ impl MouseState {
             MouseButton::Five => self.buttons[4],
         }
     }
+
+    /// Get a vector of the currently activated MouseButtons
+    pub fn get_buttons(&self) -> Vec<MouseButton> {
+        let mut buttons = Vec::with_capacity(5);
+        let codes = [
+            MouseButton::Right,
+            MouseButton::Left,
+            MouseButton::Middle,
+            MouseButton::Four,
+            MouseButton::Five,
+        ];
+
+        for (i, button) in (&self.buttons).iter().enumerate() {
+            if *button {
+                buttons.push(codes[i].clone());
+            }
+        }
+
+        buttons
+    }
 }
 
 /// Allows access to mouse buttons in a named way
 /// via MouseState::get_button()
+#[derive(PartialEq, Debug, Clone)]
 pub enum MouseButton {
     Right,
     Left,
@@ -112,5 +132,25 @@ mod tests {
         assert_eq!(test_mouse.get_button(MouseButton::Middle), true);
         assert_eq!(test_mouse.get_button(MouseButton::Four), false);
         assert_eq!(test_mouse.get_button(MouseButton::Five), true);
+    }
+
+    #[test]
+    fn get_buttons_test() {
+        let test_mouse = MouseState {
+            coordinates: (100, 100),
+            buttons: [false; 5],
+        };
+
+        assert_eq!(test_mouse.get_buttons(), Vec::default());
+
+        let test_mouse = MouseState {
+            coordinates: (100, 100),
+            buttons: [true, false, true, false, true],
+        };
+
+        assert_eq!(
+            test_mouse.get_buttons(),
+            vec![MouseButton::Right, MouseButton::Middle, MouseButton::Five]
+        );
     }
 }

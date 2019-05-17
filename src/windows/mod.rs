@@ -1,3 +1,5 @@
+//! The Windows version of the internals
+
 mod devicestate;
 mod keymap;
 

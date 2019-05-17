@@ -1,3 +1,5 @@
+//! The Linux version of the internals
+
 mod devicestate;
 mod keymap;
 
