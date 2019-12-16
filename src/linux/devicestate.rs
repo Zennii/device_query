@@ -71,7 +71,7 @@ impl DeviceState {
             create_button_arr(&buttons)
         };
 
-        MouseState::from((win_x, win_y), buttons);
+        MouseState::from((win_x, win_y), buttons)
     }
 
     /// Query the keyboard for all pressed keys, returned as a vector of KeyCodes
