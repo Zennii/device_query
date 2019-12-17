@@ -13,10 +13,13 @@ impl DeviceState {
     pub fn new() -> DeviceState {
         unsafe {
             xlib::XInitThreads();
+            let display = xlib::XOpenDisplay(ptr::null());
 
-            DeviceState {
-                display: xlib::XOpenDisplay(ptr::null()),
+            if display.is_null() {
+                panic!("display is null");
             }
+
+            DeviceState { display }
         }
     }
 
@@ -77,13 +80,17 @@ impl DeviceState {
     /// Query the keyboard for all pressed keys, returned as a vector of KeyCodes
     pub fn query_keymap(&self) -> Vec<KeyCode> {
         let mut key_codes = Vec::new(); // Create vector to hold all key codes
-        let key_map: *mut i8 = [0; 32].as_mut_ptr(); // Create an empty key map array
+        let mut key_map: [std::os::raw::c_char; 32] = [0; 32]; // Create an empty key map array
 
         unsafe {
-            xlib::XQueryKeymap(self.display, key_map); // Query the OS for the key map and fill `key_map` with results
+            xlib::XQueryKeymap(self.display, key_map.as_mut_ptr()); // Query the OS for the key map and fill `key_map` with results
         }
 
-        for (ix, byte) in unsafe { slice::from_raw_parts(key_map, 32).iter().enumerate() } {
+        for (ix, byte) in unsafe {
+            slice::from_raw_parts(key_map.as_mut_ptr(), 32)
+                .iter()
+                .enumerate()
+        } {
             for bit in 0_u8..8_u8 {
                 let bitmask = 1 << bit;
 
