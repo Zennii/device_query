@@ -122,10 +122,3 @@ impl DeviceState {
         key_codes
     }
 }
-
-impl Default for DeviceState {
-    /// Create a new DeviceState
-    fn default() -> Self {
-        Self::new()
-    }
-}
