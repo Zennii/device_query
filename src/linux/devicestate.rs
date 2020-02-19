@@ -1,5 +1,5 @@
 use crate::{KeyCode, MouseState};
-use std::{ptr, slice};
+use std::{ptr, slice, io};
 use x11::xlib;
 
 /// The base struct for getting Mouse and Keyboard information,
@@ -10,16 +10,16 @@ pub struct DeviceState {
 
 impl DeviceState {
     /// Create a new DeviceState
-    pub fn new() -> DeviceState {
+    pub fn new() -> Result<DeviceState, io::Error> {
         unsafe {
             xlib::XInitThreads();
             let display = xlib::XOpenDisplay(ptr::null());
 
             if display.is_null() {
-                panic!("display is null");
+                Err(io::Error::new(io::ErrorKind::NotFound, "XOpenDisplay pointer is null"))
+            } else {
+                Ok(DeviceState { display })
             }
-
-            DeviceState { display }
         }
     }
 
